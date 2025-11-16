@@ -342,7 +342,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int i2c_addr)
     tps546_config = config;
 
     ESP_LOGI(TAG, "Initializing the core voltage regulator with TPS546_%i", i2c_addr);
-    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2CADDR[i2c_addr], &tps546_i2c_handle[i2c_addr], TAG), TAG, "Failed to add TPS546 I2C");
+    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2C_ADDR[i2c_addr], &tps546_i2c_handle[i2c_addr], TAG), TAG, "Failed to add TPS546 I2C");
 
     // 1) Power-up guard (PMBus ready after AVIN UVLO + ~8 ms)
     vTaskDelay(pdMS_TO_TICKS(15));  // conservative
@@ -385,7 +385,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int i2c_addr)
     smb_write_byte(PMBUS_ON_OFF_CONFIG, u8_value, i2c_addr);
 
     /* Read version number and see if it matches */
-    TPS546_read_mfr_info(read_mfr_revision);
+    TPS546_read_mfr_info(read_mfr_revision, i2c_addr);
     // if (memcmp(read_mfr_revision, MFR_REVISION, 3) != 0) {
     
     // If it doesn't match, then write all the registers and set new version number
@@ -407,13 +407,13 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int i2c_addr)
     // TPS546_set_frequency(650);
 
     /* Show voltage settings */
-    TPS546_show_voltage_settings();
+    TPS546_show_voltage_settings(i2c_addr);
 
     smb_read_word(PMBUS_STATUS_WORD, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read STATUS_WORD: %04x", u16_value);
 
     ESP_LOGI(TAG, "-----------VOLTAGE/CURRENT---------------------");
-    smb_read_word(PMBUS_READ_VIN, &u16_value);
+    smb_read_word(PMBUS_READ_VIN, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read READ_VIN: %.2fV", slinear11_2_float(u16_value));
     smb_read_word(PMBUS_READ_IOUT, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read READ_IOUT: %.2fA", slinear11_2_float(u16_value));
