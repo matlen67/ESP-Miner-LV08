@@ -997,7 +997,7 @@ esp_err_t TPS546_set_vout(float volts, int i2c_addr) {
             return ESP_FAIL;
         } else {
             /* set the output voltage */
-            value = float_2_ulinear16(volts);
+            value = float_2_ulinear16(volts, i2c_addr);
             if (smb_write_word(PMBUS_VOUT_COMMAND, value, i2c_addr) != ESP_OK) {
                 ESP_LOGE(TAG, "Could not set Vout to %1.2f V", volts);
                 return ESP_FAIL;
