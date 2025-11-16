@@ -159,7 +159,7 @@ esp_err_t VCORE_set_voltage(GlobalState * GLOBAL_STATE, float core_voltage)
  
     if (GLOBAL_STATE->DEVICE_CONFIG.DS4432U) {
         if (core_voltage != 0.0f) {
-            ESP_RETURN_ON_ERROR(DS4432U_set_voltage(core_voltage), TAG, "DS4432U set voltage failed!");
+            ESP_RETURN_ON_ERROR(DS4432U_set_voltage(core_voltage, 0), TAG, "DS4432U set voltage failed!");
         }
     }
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546 || GLOBAL_STATE->DEVICE_CONFIG.TPS546_1) {
