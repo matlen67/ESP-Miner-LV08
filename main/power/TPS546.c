@@ -724,7 +724,7 @@ float TPS546_get_iout(int i2c_addr)
     #endif
 
     //set the phase register back to the default
-    smb_write_byte(PMBUS_PHASE, TPS546_INIT_PHASE);
+    smb_write_byte(PMBUS_PHASE, TPS546_INIT_PHASE, i2c_addr);
 
         return iout;
     }
@@ -1079,7 +1079,7 @@ void TPS546_show_voltage_settings(int i2c_addr)
 
     /* --- VOUT_COMMAND --- */
     smb_read_word(PMBUS_VOUT_COMMAND, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value), i2c_addr;
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_COMMAND: %.2fV", f_value);
 
     /* VOUT_MARGIN_LOW */
