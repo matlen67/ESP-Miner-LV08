@@ -1059,47 +1059,47 @@ void TPS546_show_voltage_settings(int i2c_addr)
 
     /* VOUT_MAX */
     smb_read_word(PMBUS_VOUT_MAX, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_MAX: %.2fV", f_value);
 
     /* VOUT_OV_FAULT_LIMIT */
     smb_read_word(PMBUS_VOUT_OV_FAULT_LIMIT, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_OV_FAULT_LIMIT: %.2fV", f_value * tps546_config.TPS546_INIT_VOUT_COMMAND);
 
     /* VOUT_OV_WARN_LIMIT */
     smb_read_word(PMBUS_VOUT_OV_WARN_LIMIT, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_OV_WARN_LIMIT: %.2fV", f_value * tps546_config.TPS546_INIT_VOUT_COMMAND);
 
     /* VOUT_MARGIN_HIGH */
     smb_read_word(PMBUS_VOUT_MARGIN_HIGH, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_MARGIN_HIGH: %.2fV", f_value * tps546_config.TPS546_INIT_VOUT_COMMAND);
 
     /* --- VOUT_COMMAND --- */
     smb_read_word(PMBUS_VOUT_COMMAND, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value), i2c_addr;
     ESP_LOGI(TAG, "read VOUT_COMMAND: %.2fV", f_value);
 
     /* VOUT_MARGIN_LOW */
     smb_read_word(PMBUS_VOUT_MARGIN_LOW, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_MARGIN_LOW: %.2fV", f_value * tps546_config.TPS546_INIT_VOUT_COMMAND);
 
     /* VOUT_UV_WARN_LIMIT */
     smb_read_word(PMBUS_VOUT_UV_WARN_LIMIT, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_UV_WARN_LIMIT: %.2fV", f_value * tps546_config.TPS546_INIT_VOUT_COMMAND);
 
     /* VOUT_UV_FAULT_LIMIT */
     smb_read_word(PMBUS_VOUT_UV_FAULT_LIMIT, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_UV_FAULT_LIMIT: %.2fV", f_value * tps546_config.TPS546_INIT_VOUT_COMMAND);
 
     /* VOUT_MIN */
     smb_read_word(PMBUS_VOUT_MIN, &u16_value, i2c_addr);
-    f_value = ulinear16_2_float(u16_value);
+    f_value = ulinear16_2_float(u16_value, i2c_addr);
     ESP_LOGI(TAG, "read VOUT_MIN: %.2f V", f_value);
 }
 
