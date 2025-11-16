@@ -418,7 +418,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int i2c_addr)
     smb_read_word(PMBUS_READ_IOUT, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read READ_IOUT: %.2fA", slinear11_2_float(u16_value));
     smb_read_word(PMBUS_READ_VOUT, &u16_value, i2c_addr);
-    ESP_LOGI(TAG, "read READ_VOUT: %.2fV", ulinear16_2_float(u16_value));
+    ESP_LOGI(TAG, "read READ_VOUT: %.2fV", ulinear16_2_float(u16_value, i2c_addr));
 
     ESP_LOGI(TAG, "-----------TIMING---------------------");
     smb_read_word(PMBUS_TON_DELAY, &u16_value, i2c_addr);
