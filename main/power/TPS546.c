@@ -748,7 +748,7 @@ float TPS546_get_vout(int i2c_addr)
     }
 }
 
-esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE, i2c_addr) {
+esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE, int i2c_addr) {
 
     SystemModule * SYSTEM_MODULE = &GLOBAL_STATE->SYSTEM_MODULE;
     uint16_t status;
@@ -774,7 +774,7 @@ const char* TPS546_get_error_message() {
 }
 
 
-static esp_err_t TPS546_parse_status(uint16_t status, i2c_addr) {
+static esp_err_t TPS546_parse_status(uint16_t status, int i2c_addr) {
     uint8_t u8_value;
 
     //print the status word
