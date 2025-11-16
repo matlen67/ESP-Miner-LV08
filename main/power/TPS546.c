@@ -36,7 +36,7 @@ static uint16_t TPS546_I2C_ADDR[3] = {0x24, 0x7F, 0x14};
 
 static TPS546_CONFIG tps546_config;
 
-static esp_err_t TPS546_parse_status(uint16_t);
+static esp_err_t TPS546_parse_status(uint16_t, int);
 
 /**
  * @brief SMBus read byte
