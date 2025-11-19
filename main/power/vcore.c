@@ -112,10 +112,6 @@ esp_err_t VCORE_init(GlobalState * GLOBAL_STATE)
             case HEX:
                 ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_HEX, 0), TAG, "TPS546 init failed!");
                 break;
-            case LV06:
-            case LV07:
-                ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_LV07, 0), TAG, "TPS546 init failed!");
-                break;
             case LV08:
                 ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_LV08, 0), TAG, "TPS546 init failed!");
                 ESP_RETURN_ON_ERROR(TPS546_init(TPS546_CONFIG_LV08, 1), TAG, "TPS546 init failed!");
