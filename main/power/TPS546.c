@@ -475,7 +475,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
     return ESP_OK;
 }
 
-esp_err_t TPS546_clear_faults(int i2c_addr) {
+esp_err_t TPS546_clear_faults(int8_t i2c_addr) {
 
     ESP_RETURN_ON_ERROR(smb_write_addr(PMBUS_CLEAR_FAULTS, i2c_addr), TAG, "Failed to write address");
 
