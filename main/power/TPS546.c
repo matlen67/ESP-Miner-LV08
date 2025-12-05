@@ -417,7 +417,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int i2c_addr)
     smb_read_word(PMBUS_READ_IOUT, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read READ_IOUT: %.2fA", slinear11_2_float(u16_value));
     smb_read_word(PMBUS_READ_VOUT, &u16_value, i2c_addr);
-    ESP_LOGI(TAG, "read READ_VOUT: %.2fV", ulinear16_2_float(u16_value));
+    ESP_LOGI(TAG, "read READ_VOUT: %.2fV", ulinear16_2_float(u16_value, i2c_addr));
 
     ESP_LOGI(TAG, "-----------TIMING---------------------");
     smb_read_word(PMBUS_TON_DELAY, &u16_value, i2c_addr);
@@ -558,7 +558,7 @@ void TPS546_write_entire_config(int i2c_addr)
 
     /* vout voltage */
     ESP_LOGI(TAG, "Setting VOUT SCALE: %.2f", tps546_config.TPS546_INIT_SCALE_LOOP);
-    smb_write_word(PMBUS_VOUT_SCALE_LOOP, float_2_slinear11(tps546_config.TPS546_INIT_SCALE_LOOP, i2c_addr), i2c_addr);
+    smb_write_word(PMBUS_VOUT_SCALE_LOOP, float_2_slinear11(tps546_config.TPS546_INIT_SCALE_LOOP), i2c_addr);
 
     ESP_LOGI(TAG, "Setting VOUT_COMMAND: %.2fV", tps546_config.TPS546_INIT_VOUT_COMMAND);
     smb_write_word(PMBUS_VOUT_COMMAND, float_2_ulinear16(tps546_config.TPS546_INIT_VOUT_COMMAND, i2c_addr), i2c_addr);
@@ -601,11 +601,11 @@ void TPS546_write_entire_config(int i2c_addr)
     /* temperature */
     ESP_LOGI(TAG, "----- TEMPERATURE");
     ESP_LOGI(TAG, "Setting OT_WARN_LIMIT: %dC", TPS546_INIT_OT_WARN_LIMIT);
-    smb_write_word(PMBUS_OT_WARN_LIMIT, int_2_slinear11(TPS546_INIT_OT_WARN_LIMIT));
+    smb_write_word(PMBUS_OT_WARN_LIMIT, int_2_slinear11(TPS546_INIT_OT_WARN_LIMIT), i2c_addr);
     ESP_LOGI(TAG, "Setting OT_FAULT_LIMIT: %dC", TPS546_INIT_OT_FAULT_LIMIT);
-    smb_write_word(PMBUS_OT_FAULT_LIMIT, int_2_slinear11(TPS546_INIT_OT_FAULT_LIMIT));
+    smb_write_word(PMBUS_OT_FAULT_LIMIT, int_2_slinear11(TPS546_INIT_OT_FAULT_LIMIT), i2c_addr);
     ESP_LOGI(TAG, "Setting OT_FAULT_RESPONSE: %02x", TPS546_INIT_OT_FAULT_RESPONSE);
-    smb_write_byte(PMBUS_OT_FAULT_RESPONSE, TPS546_INIT_OT_FAULT_RESPONSE);
+    smb_write_byte(PMBUS_OT_FAULT_RESPONSE, TPS546_INIT_OT_FAULT_RESPONSE, i2c_addr);
 
     /* timing */
     ESP_LOGI(TAG, "----- TIMING");
@@ -628,7 +628,7 @@ void TPS546_write_entire_config(int i2c_addr)
 
     /* configure the bootup behavior regarding pin detect values vs NVM values */
     ESP_LOGI(TAG, "Setting PIN_DETECT_OVERRIDE");
-    smb_write_word(PMBUS_PIN_DETECT_OVERRIDE, INIT_PIN_DETECT_OVERRIDE), i2c_addr;
+    smb_write_word(PMBUS_PIN_DETECT_OVERRIDE, INIT_PIN_DETECT_OVERRIDE, i2c_addr);
 
     /* TODO write new MFR_REVISION number to reflect these parameters */
     // ESP_LOGI(TAG, "Setting MFR ID");
@@ -709,7 +709,7 @@ float TPS546_get_iout(int i2c_addr)
     float iout;
 
     //set the phase register to 0xFF to read all phases
-    smb_write_byte(PMBUS_PHASE, 0xFF);
+    smb_write_byte(PMBUS_PHASE, 0xFF, i2c_addr);
 
     /* Get current output (SLINEAR11) */
     if (smb_read_word(PMBUS_READ_IOUT, &u16_value, i2c_addr) != ESP_OK) {
@@ -735,7 +735,7 @@ float TPS546_get_vout(int i2c_addr)
     float vout;
 
     /* Get voltage output (ULINEAR16) */
-    if (smb_read_word(PMBUS_READ_VOUT, &u16_value, i2c_add) != ESP_OK) {
+    if (smb_read_word(PMBUS_READ_VOUT, &u16_value, i2c_addr) != ESP_OK) {
         ESP_LOGE(TAG, "Could not read Vout");
         return 0;
     } else {
@@ -996,7 +996,7 @@ esp_err_t TPS546_set_vout(float volts, int i2c_addr) {
             return ESP_FAIL;
         } else {
             /* set the output voltage */
-            value = float_2_ulinear16(volts);
+            value = float_2_ulinear16(volts, i2c_addr);
             if (smb_write_word(PMBUS_VOUT_COMMAND, value, i2c_addr) != ESP_OK) {
                 ESP_LOGE(TAG, "Could not set Vout to %1.2f V", volts);
                 return ESP_FAIL;
