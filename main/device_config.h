@@ -41,6 +41,7 @@ typedef enum
     GAMMA,
     SUPRA_HEX,
     GAMMA_TURBO,
+LV08,
 } Family;
 
 typedef struct {
@@ -71,6 +72,7 @@ typedef struct {
     bool DS4432U : 1;
     bool INA260  : 1;
     bool TPS546  : 1;
+    bool TPS546_LV08 : 1;
     // test values
     uint16_t power_consumption_target;
 } DeviceConfig;
@@ -104,6 +106,7 @@ static const FamilyConfig FAMILY_SUPRA       = { .id = SUPRA,       .name = "Sup
 static const FamilyConfig FAMILY_GAMMA       = { .id = GAMMA,       .name = "Gamma",      .asic = ASIC_BM1370, .asic_count = 1, .max_power =  40, .power_offset = 5,  .nominal_voltage = 5,  .voltage_domains = 1, .swarm_color = "green",    };
 static const FamilyConfig FAMILY_SUPRA_HEX   = { .id = SUPRA_HEX,   .name = "SupraHex",   .asic = ASIC_BM1368, .asic_count = 6, .max_power = 120, .power_offset = 25, .nominal_voltage = 12, .voltage_domains = 3, .swarm_color = "darkblue", };
 static const FamilyConfig FAMILY_GAMMA_TURBO = { .id = GAMMA_TURBO, .name = "GammaTurbo", .asic = ASIC_BM1370, .asic_count = 2, .max_power =  60, .power_offset = 10, .nominal_voltage = 12, .voltage_domains = 1, .swarm_color = "cyan",     };
+static const FamilyConfig FAMILY_LV08        = { .id = LV08,        .name = "LV08",       .asic = ASIC_BM1366, .asic_count = 9, .max_power = 140, .power_offset = 12, .nominal_voltage = 12, .voltage_domains = 1, .swarm_color = "orange", };
 
 static const FamilyConfig default_families[] = {
     FAMILY_MAX,
@@ -113,6 +116,7 @@ static const FamilyConfig default_families[] = {
     FAMILY_GAMMA,
     FAMILY_SUPRA_HEX,
     FAMILY_GAMMA_TURBO,
+    FAMILY_LV08,
 };
 
 static const DeviceConfig default_configs[] = {
@@ -137,6 +141,7 @@ static const DeviceConfig default_configs[] = {
     { .board_version = "701",  .family = FAMILY_SUPRA_HEX,   .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 10,  .TPS546 = true,                                                           .power_consumption_target = 90, },
     { .board_version = "702",  .family = FAMILY_SUPRA_HEX,   .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 10,  .TPS546 = true,                                                           .power_consumption_target = 90, },
     { .board_version = "800",  .family = FAMILY_GAMMA_TURBO, .EMC2103 = true,                                                             .temp_offset = -10, .TPS546 = true,                                                           .power_consumption_target = 12, },
+    { .board_version = "302",  .family = FAMILY_LV08,        .EMC2302 = true, .TMP1075 = true,                                            .temp_offset = 5,   .TPS546_LV08 = true,                                                      .power_consumption_target = 140,},
 };
 
 esp_err_t device_config_init(void * pvParameters);
