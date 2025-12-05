@@ -36,14 +36,14 @@ static uint16_t TPS546_I2C_ADDR[3] = {0x24, 0x7F, 0x14};
 
 static TPS546_CONFIG tps546_config;
 
-static esp_err_t TPS546_parse_status(uint16_t, int);
+static esp_err_t TPS546_parse_status(uint16_t, int8_t);
 
 /**
  * @brief SMBus read byte
  * @param command The command to read
  * @param data Pointer to store the read data
  */
-static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, int i2c_addr)
+static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, int8_t i2c_addr)
 {
     return i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, data, 1);
 }
@@ -53,7 +53,7 @@ static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, int i2c_addr)
  * @param command The command to write
  * @param data The data to write
  */
-static esp_err_t smb_write_byte(uint8_t command, uint8_t data, int i2c_addr)
+static esp_err_t smb_write_byte(uint8_t command, uint8_t data, int8_t i2c_addr)
 {
     return i2c_bitaxe_register_write_byte(tps546_i2c_handle[i2c_addr], command, data);
 }
@@ -62,7 +62,7 @@ static esp_err_t smb_write_byte(uint8_t command, uint8_t data, int i2c_addr)
  * @brief SMBus write addr
  * @param command The command to write
  */
-static esp_err_t smb_write_addr(uint8_t command, int i2c_addr)
+static esp_err_t smb_write_addr(uint8_t command, int8_t i2c_addr)
 {
     return i2c_bitaxe_register_write_addr(tps546_i2c_handle[i2c_addr], command);
 }
@@ -72,7 +72,7 @@ static esp_err_t smb_write_addr(uint8_t command, int i2c_addr)
  * @param command The command to read
  * @param result Pointer to store the read data
  */
-static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int i2c_addr)
+static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int8_t i2c_addr)
 {
     uint8_t data[2];
     if (i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, data, 2) != ESP_OK) {
@@ -88,7 +88,7 @@ static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int i2c_addr)
  * @param command The command to write
  * @param data The data to write
  */
-static esp_err_t smb_write_word(uint8_t command, uint16_t data, int i2c_addr)
+static esp_err_t smb_write_word(uint8_t command, uint16_t data, int8_t i2c_addr)
 {
     return i2c_bitaxe_register_write_word(tps546_i2c_handle[i2c_addr], command, data);
 }
@@ -99,7 +99,7 @@ static esp_err_t smb_write_word(uint8_t command, uint16_t data, int i2c_addr)
  * @param data Pointer to store the read data
  * @param len The number of bytes to read
  */
-static esp_err_t smb_read_block(uint8_t command, uint8_t *data, uint8_t len, int i2c_addr)
+static esp_err_t smb_read_block(uint8_t command, uint8_t *data, uint8_t len, int8_t i2c_addr)
 {
     //malloc a buffer len+1 to store the length byte
     uint8_t *buf = (uint8_t *)malloc(len+1);
@@ -281,7 +281,7 @@ static uint16_t float_2_slinear11(float value)
  * The mantissa occupies the full 16-bits of the value
  * @param value The ULINEAR16 value to convert
  */
-static float ulinear16_2_float(uint16_t value, int i2c_addr)
+static float ulinear16_2_float(uint16_t value, int8_t i2c_addr)
 {
     uint8_t voutmode;
     int exponent;
@@ -306,7 +306,7 @@ static float ulinear16_2_float(uint16_t value, int i2c_addr)
  * The mantissa occupies the full 16-bits of the result
  * @param value The float value to convert
 */
-static uint16_t float_2_ulinear16(float value, int i2c_addr)
+static uint16_t float_2_ulinear16(float value, int8_t i2c_addr)
 {
     uint8_t voutmode;
     float exponent;
@@ -330,7 +330,7 @@ static uint16_t float_2_ulinear16(float value, int i2c_addr)
 /**
  * @brief Set up the TPS546 regulator and turn it on
 */
-esp_err_t TPS546_init(TPS546_CONFIG config, int i2c_addr)
+esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
 {
     uint8_t u8_value = 0;
     uint16_t u16_value = 0;
@@ -489,7 +489,7 @@ esp_err_t TPS546_clear_faults(int i2c_addr) {
  * @brief Read the manufacturer model and revision 
  * @param read_mfr_revision Pointer to store the read revision
 */
-void TPS546_read_mfr_info(uint8_t *read_mfr_revision, int i2c_addr)
+void TPS546_read_mfr_info(uint8_t *read_mfr_revision, int8_t i2c_addr)
 {
     uint8_t read_mfr_id[4];
     uint8_t read_mfr_model[4];
@@ -518,7 +518,7 @@ void TPS546_read_mfr_info(uint8_t *read_mfr_revision, int i2c_addr)
 /**
  * @brief Set all the relevant config registers for normal operation 
 */
-void TPS546_write_entire_config(int i2c_addr)
+void TPS546_write_entire_config(int8_t i2c_addr)
 {
     ESP_LOGI(TAG, "---Writing new config values to TPS546---");
     /* set up the ON_OFF_CONFIG */
@@ -649,7 +649,7 @@ void TPS546_write_entire_config(int i2c_addr)
 
 }
 
-int TPS546_get_frequency(int i2c_addr)
+int TPS546_get_frequency(int8_t i2c_addr)
 {
     uint16_t value = 0;
     int freq;
@@ -660,7 +660,7 @@ int TPS546_get_frequency(int i2c_addr)
     return (int)freq;
 }
 
-void TPS546_set_frequency(int newfreq, int i2c_addr)
+void TPS546_set_frequency(int newfreq, int8_t i2c_addr)
 {
     uint16_t value = 0;
     //int freq;
@@ -675,7 +675,7 @@ void TPS546_set_frequency(int newfreq, int i2c_addr)
     //ESP_LOGI(TAG, "Converted value: %d", freq);
 }
 
-int TPS546_get_temperature(int i2c_addr)
+int TPS546_get_temperature(int8_t i2c_addr)
 {
     uint16_t value = 0;
     int temp;
@@ -685,7 +685,7 @@ int TPS546_get_temperature(int i2c_addr)
     return temp;
 }
 
-float TPS546_get_vin(int i2c_addr)
+float TPS546_get_vin(int8_t i2c_addr)
 {
     uint16_t u16_value = 0;
     float vin;
@@ -703,7 +703,7 @@ float TPS546_get_vin(int i2c_addr)
     }    
 }
 
-float TPS546_get_iout(int i2c_addr)
+float TPS546_get_iout(int8_t i2c_addr)
 {
     uint16_t u16_value = 0;
     float iout;
@@ -729,7 +729,7 @@ float TPS546_get_iout(int i2c_addr)
     }
 }
 
-float TPS546_get_vout(int i2c_addr)
+float TPS546_get_vout(int8_t i2c_addr)
 {
     uint16_t u16_value = 0;
     float vout;
@@ -747,7 +747,7 @@ float TPS546_get_vout(int i2c_addr)
     }
 }
 
-esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE, int i2c_addr) {
+esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE, int8_t i2c_addr) {
 
     SystemModule * SYSTEM_MODULE = &GLOBAL_STATE->SYSTEM_MODULE;
     uint16_t status;
@@ -773,7 +773,7 @@ const char* TPS546_get_error_message() {
 }
 
 
-static esp_err_t TPS546_parse_status(uint16_t status, int i2c_addr) {
+static esp_err_t TPS546_parse_status(uint16_t status, int8_t i2c_addr) {
     uint8_t u8_value;
 
     //print the status word
@@ -979,7 +979,7 @@ static esp_err_t TPS546_parse_status(uint16_t status, int i2c_addr) {
  * send a 0 to turn off the output
  * @param volts The desired output voltage
 **/
-esp_err_t TPS546_set_vout(float volts, int i2c_addr) {
+esp_err_t TPS546_set_vout(float volts, int8_t i2c_addr) {
     uint16_t value;
     uint8_t value8;
 
@@ -1025,7 +1025,7 @@ esp_err_t TPS546_set_vout(float volts, int i2c_addr) {
     return ESP_OK;
 }
 
-void TPS546_show_voltage_settings(int i2c_addr)
+void TPS546_show_voltage_settings(int8_t i2c_addr)
 {
     uint16_t u16_value = 0;
     uint8_t u8_value;
