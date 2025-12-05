@@ -174,7 +174,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr);
 void TPS546_read_mfr_info(uint8_t *, int8_t i2c_addr);
 void TPS546_write_entire_config(int8_t i2c_addr);
 int TPS546_get_frequency(int8_t i2c_addr);
-void TPS546_set_frequency(int8_t, int i2c_addr);
+void TPS546_set_frequency(int, int8_t i2c_addr);
 int TPS546_get_temperature(int8_t i2c_addr);
 float TPS546_get_vin(int8_t i2c_addr);
 float TPS546_get_iout(int8_t i2c_addr);
