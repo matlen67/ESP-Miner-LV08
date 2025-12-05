@@ -41,7 +41,7 @@ typedef enum
     GAMMA,
     SUPRA_HEX,
     GAMMA_TURBO,
-LV08,
+    LV08,
 } Family;
 
 typedef struct {
