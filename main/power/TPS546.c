@@ -281,7 +281,7 @@ static uint16_t float_2_slinear11(float value)
  * The mantissa occupies the full 16-bits of the value
  * @param value The ULINEAR16 value to convert
  */
-static float ulinear16_2_float(uint16_t value , i2c_addr)
+static float ulinear16_2_float(uint16_t value, int i2c_addr)
 {
     uint8_t voutmode;
     int exponent;
