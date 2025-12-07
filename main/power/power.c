@@ -3,7 +3,6 @@
 #include "DS4432U.h"
 
 #include "power.h"
-#include <math.h>
 
 float Power_get_current(GlobalState * GLOBAL_STATE)
 {
@@ -13,7 +12,7 @@ float Power_get_current(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         return INA260_read_current();
     }
-     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         float iout = TPS546_get_iout(0);
 
         for (int addr = 1; addr < 3; addr++) {
@@ -24,6 +23,7 @@ float Power_get_current(GlobalState * GLOBAL_STATE)
         
         return iout * 1000.0f;        
     }
+    
     return 0.0;
 }
 
