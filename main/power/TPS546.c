@@ -341,7 +341,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
 
     tps546_config = config;
 
-    ESP_LOGI(TAG, "Initializing the core voltage regulator with TPS546_%i", i2c_addr);
+    ESP_LOGI(TAG, "Initializing the core voltage regulator");
     ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2C_ADDR[i2c_addr], &tps546_i2c_handle[i2c_addr], TAG), TAG, "Failed to add TPS546 I2C");
 
     // 1) Power-up guard (PMBus ready after AVIN UVLO + ~8 ms)
@@ -682,6 +682,9 @@ int TPS546_get_temperature(int8_t i2c_addr)
 
     smb_read_word(PMBUS_READ_TEMPERATURE_1, &value, i2c_addr);
     temp = slinear11_2_int(value);
+    #ifdef DEBUG_TPS546_MEAS
+    ESP_LOGI(TAG, "TPS546_%i - Got Temp: %i C", i2c_addr, temp);
+    #endif
     return temp;
 }
 
