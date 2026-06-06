@@ -60,6 +60,23 @@ static TPS546_CONFIG get_tps546_config(const FamilyConfig * family)
         config.TPS546_INIT_SYNC_CONFIG = 0x10;    // Disable SYNC
         break;
 
+     case LV08:
+        config.TPS546_INIT_PHASE = TPS546_INIT_PHASE_SINGLE;
+        config.TPS546_INIT_VIN_ON = 11.5;
+        config.TPS546_INIT_VIN_OFF = 11.0;
+        config.TPS546_INIT_VIN_UV_WARN_LIMIT = 11.0;
+        config.TPS546_INIT_VIN_OV_FAULT_LIMIT = 14.0;
+        config.TPS546_INIT_SCALE_LOOP = 0.125;
+        config.TPS546_INIT_VOUT_MIN = 1;
+        config.TPS546_INIT_VOUT_MAX = 4;
+        config.TPS546_INIT_VOUT_COMMAND = 3.6;
+        config.TPS546_INIT_IOUT_OC_WARN_LIMIT = 45.00;
+        config.TPS546_INIT_IOUT_OC_FAULT_LIMIT = 50.00;
+        // Single-phase configuration
+        config.TPS546_INIT_STACK_CONFIG = 0x0000; // 1 module
+        config.TPS546_INIT_SYNC_CONFIG = 0x10;    // Disable SYNC
+        break;
+
     default: // MAX, ULTRA, SUPRA, GAMMA
         config.TPS546_INIT_PHASE = TPS546_INIT_PHASE_SINGLE;
         config.TPS546_INIT_VIN_ON = 4.8;
@@ -91,9 +108,18 @@ esp_err_t VCORE_init(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         ESP_RETURN_ON_ERROR(INA260_init(), TAG, "INA260 init failed!");
     }
-    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546 || GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         TPS546_CONFIG tps_config = get_tps546_config(&GLOBAL_STATE->DEVICE_CONFIG.family);
-        ESP_RETURN_ON_ERROR(TPS546_init(tps_config), TAG, "TPS546 init failed!");
+        switch (GLOBAL_STATE->DEVICE_CONFIG.family.id) {
+            case LV08:
+                for (int addr = 0; addr < 3; addr++) {
+                    ESP_RETURN_ON_ERROR(TPS546_init(tps_config, addr), TAG, "TPS546 init failed!");
+                }
+                break;
+            default:
+                ESP_RETURN_ON_ERROR(TPS546_init(tps_config, 0), TAG, "TPS546 init failed!");
+                break;
+        }
     }
 
     if (GLOBAL_STATE->DEVICE_CONFIG.plug_sense) {
@@ -134,6 +160,12 @@ esp_err_t VCORE_set_voltage(GlobalState * GLOBAL_STATE, float core_voltage)
         uint16_t voltage_domains = GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains;
         ESP_RETURN_ON_ERROR(TPS546_set_vout(core_voltage * voltage_domains), TAG, "TPS546 set voltage failed!");
     }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+        uint16_t voltage_domains = GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains;
+        for (int addr = 0; addr < 3; addr++) {
+            ESP_RETURN_ON_ERROR(TPS546_set_vout(core_voltage * voltage_domains, addr), TAG, "TPS546 set voltage failed!");
+        }
+    }
 
     return ESP_OK;
 }
@@ -143,6 +175,19 @@ int16_t VCORE_get_voltage_mv(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         return TPS546_get_vout() / GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains * 1000;
     }
+
+     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+        float vmax = TPS546_get_vout(0);
+
+        for (int addr = 1; addr < 3; addr++) {
+            float v = TPS546_get_vout(addr);
+            if (v > vmax)
+                vmax = v;
+        }
+        
+        return vmax / GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains * 1000.0f;
+    }
+    
     return ADC_get_vcore();
 }
 
@@ -151,12 +196,18 @@ esp_err_t VCORE_check_fault(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         ESP_RETURN_ON_ERROR(TPS546_check_status(GLOBAL_STATE), TAG, "TPS546 check status failed!");
     }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+        for (int addr = 0; addr < 3; addr++) {
+            ESP_RETURN_ON_ERROR(TPS546_check_status(GLOBAL_STATE, addr), TAG, "TPS546 check status failed!");
+        }
+    }
+    
     return ESP_OK;
 }
 
 const char * VCORE_get_fault_string(GlobalState * GLOBAL_STATE)
 {
-    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546 || GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         return TPS546_get_error_message();
     }
     return NULL;
