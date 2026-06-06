@@ -534,7 +534,7 @@ void TPS546_write_entire_config(int8_t i2c_addr)
     //u8_value = (ON_OFF_CONFIG_DELAY | ON_OFF_CONFIG_POLARITY | ON_OFF_CONFIG_CP | ON_OFF_CONFIG_CMD | ON_OFF_CONFIG_PU);
     uint8_t u8_value = (ON_OFF_CONFIG_DELAY | ON_OFF_CONFIG_POLARITY | ON_OFF_CONFIG_CMD | ON_OFF_CONFIG_PU);
     ESP_LOGI(TAG, "Setting ON_OFF_CONFIG: %02X", u8_value);
-    smb_write_byte(PMBUS_ON_OFF_CONFIG, u8_value);
+    smb_write_byte(PMBUS_ON_OFF_CONFIG, u8_value, i2c_addr);
 
 
     // STACK_CONFIG
@@ -564,7 +564,7 @@ void TPS546_write_entire_config(int8_t i2c_addr)
             tps546_config.TPS546_INIT_COMPENSATION_CONFIG[0], tps546_config.TPS546_INIT_COMPENSATION_CONFIG[1],
             tps546_config.TPS546_INIT_COMPENSATION_CONFIG[2], tps546_config.TPS546_INIT_COMPENSATION_CONFIG[3],
             tps546_config.TPS546_INIT_COMPENSATION_CONFIG[4]);
-        smb_write_block(PMBUS_COMPENSATION_CONFIG, tps546_config.TPS546_INIT_COMPENSATION_CONFIG, 5);
+        smb_write_block(PMBUS_COMPENSATION_CONFIG, tps546_config.TPS546_INIT_COMPENSATION_CONFIG, 5, i2c_addr);
 
     }
 
@@ -593,7 +593,7 @@ void TPS546_write_entire_config(int8_t i2c_addr)
     smb_write_word(PMBUS_VOUT_SCALE_LOOP, float_2_slinear11(tps546_config.TPS546_INIT_SCALE_LOOP), i2c_addr);
 
     ESP_LOGI(TAG, "Setting VOUT_COMMAND: %.2fV", tps546_config.TPS546_INIT_VOUT_COMMAND);
-    smb_write_word(PMBUS_VOUT_COMMAND, float_2_ulinear16(tps546_config.TPS546_INIT_VOUT_COMMAND), i2c_addr);
+    smb_write_word(PMBUS_VOUT_COMMAND, float_2_ulinear16(tps546_config.TPS546_INIT_VOUT_COMMAND, i2c_addr), i2c_addr);
 
     ESP_LOGI(TAG, "Setting VOUT_MAX: %.2fV", tps546_config.TPS546_INIT_VOUT_MAX);
     smb_write_word(PMBUS_VOUT_MAX, float_2_ulinear16(tps546_config.TPS546_INIT_VOUT_MAX, i2c_addr), i2c_addr);
@@ -785,7 +785,7 @@ esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE, int8_t i2c_addr) {
     SystemModule * SYSTEM_MODULE = &GLOBAL_STATE->SYSTEM_MODULE;
     uint16_t status;
 
-    ESP_RETURN_ON_ERROR(smb_read_word(PMBUS_STATUS_WORD, &status), TAG, "Failed to read STATUS_WORD");
+    ESP_RETURN_ON_ERROR(smb_read_word(PMBUS_STATUS_WORD, &status, i2c_addr), TAG, "Failed to read STATUS_WORD");
     //determine if this is a fault we care about
     if (status & (TPS546_STATUS_OFF | TPS546_STATUS_VOUT_OV | TPS546_STATUS_IOUT_OC | TPS546_STATUS_VIN_UV | TPS546_STATUS_TEMP)) {
         if (SYSTEM_MODULE->power_fault == 0) {
