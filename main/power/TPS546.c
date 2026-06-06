@@ -474,7 +474,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
 
 
     ESP_LOGI(TAG, "Clearing faults");
-    TPS546_clear_faults();
+    TPS546_clear_faults(i2c_addr);
 
     smb_read_word(PMBUS_STATUS_WORD, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read STATUS_WORD: %04x", u16_value);
@@ -482,7 +482,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
     return ESP_OK;
 }
 
-esp_err_t TPS546_clear_faults(void) {
+esp_err_t TPS546_clear_faults(int8_t i2c_addr) {
 
     ESP_RETURN_ON_ERROR(smb_write_addr(PMBUS_CLEAR_FAULTS, i2c_addr), TAG, "Failed to write address");
 
