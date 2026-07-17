@@ -23,18 +23,16 @@ void Power_get_output(GlobalState * GLOBAL_STATE, float * power_out, float * cur
     }
 
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
-        float iout = TPS546_get_iout(0);
-        float vout = TPS546_get_vout(0);
+        cur_val = 0.0f;
+        pow_val = 0.0f;
 
-        for (int addr = 1; addr < 3; addr++) {
-            float i = TPS546_get_iout(addr);
-            if (i > iout)
-                iout = i;
+        for (int addr = 0; addr < 3; addr++) {
+            float iout = TPS546_get_iout(addr);
+            float vout = TPS546_get_vout(addr);
+            cur_val += iout * 1000.0f;
+            pow_val += vout * iout;
         }
         
-        cur_val = iout * 1000.0f;
-
-        pow_val   = vout * iout;
         pow_val  += GLOBAL_STATE->DEVICE_CONFIG.family.power_offset;
     }
     
