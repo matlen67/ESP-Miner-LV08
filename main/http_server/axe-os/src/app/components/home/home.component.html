@@ -363,7 +363,7 @@
                                 pTooltip="{{info.fan2rpm > 0 ? 'Fan 1: ' : ''}}{{info.fanrpm}} RPM{{info.fan2rpm > 0 ? '<br>Fan 2: ' + info.fan2rpm + ' RPM' : ''}}">
 
                             <ng-container *ngIf="info.fan2rpm > 0; else singleFan">
-                                Fan Speeds
+                                Fan 1
                             </ng-container>
                             <ng-template #singleFan>
                                 Fan Speed
@@ -371,11 +371,27 @@
 
                             <span>{{info.fanspeed.toFixed(1)}} %</span>
                         </h6>
-                        <p-progressBar [value]="info.fanspeed" [styleClass]="'p-progressbar--thin'">
+                        <p-progressBar [value]="(info.fanrpm / maxRpm) * 100" [styleClass]="'p-progressbar--thin'">
                             <ng-template pTemplate="content" let-value></ng-template>
                         </p-progressBar>
                     </div>
+                    
                 </div>
+
+                <div *ngIf="info.fan2rpm > 0">
+                    <h6 class="flex justify-content-between mb-1">
+                        Fan 2
+                        <span>
+                            <ng-container *ngIf="info.fan2rpm > 0; else noValue">
+                                {{info.fan2rpm}} RPM
+                            </ng-container>
+                        </span>
+                    </h6>
+                    <p-progressBar [value]="(info.fan2rpm / maxRpm) * 100" [styleClass]="'p-progressbar--thin'">
+                        <ng-template pTemplate="content" let-value></ng-template>
+                    </p-progressBar>
+                </div>
+                
             </div>
         </div>
 
