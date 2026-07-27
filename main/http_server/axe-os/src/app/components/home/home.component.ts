@@ -1308,7 +1308,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       case eChartLabel.current:          return this.maxPower / info.coreVoltage;
       case eChartLabel.fanSpeed:         return 100;
       case eChartLabel.fanRpm:           return 7000;
-      case eChartLabel.fan2Rpm:          return 3300;
+      case eChartLabel.fan2Rpm:          return 7000;
       case eChartLabel.responseTime:     return 50;
       default:                           return 0;
     }
