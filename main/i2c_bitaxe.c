@@ -13,8 +13,8 @@
 #define I2C_MASTER_FREQ_HZ 100000
 
 #define I2C_MASTER_NUM 0
-#define I2C_MASTER_TIMEOUT_MS 500
-#define I2C_RETRY_COUNT 3
+#define I2C_MASTER_TIMEOUT_MS 2000
+#define I2C_RETRY_COUNT 10
 #define I2C_RETRY_DELAY_MS 10
 
 static i2c_master_bus_handle_t i2c_bus_handle;
