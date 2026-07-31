@@ -66,12 +66,12 @@ static TPS546_CONFIG get_tps546_config(const FamilyConfig * family)
         config.TPS546_INIT_VIN_OFF = 11.0;
         config.TPS546_INIT_VIN_UV_WARN_LIMIT = 11.0;
         config.TPS546_INIT_VIN_OV_FAULT_LIMIT = 14.0;
-        config.TPS546_INIT_SCALE_LOOP = 0.25;
+        config.TPS546_INIT_SCALE_LOOP = 0.125;
         config.TPS546_INIT_VOUT_MIN = 1;
-        config.TPS546_INIT_VOUT_MAX = 3;
-        config.TPS546_INIT_VOUT_COMMAND = 1.2;
-        config.TPS546_INIT_IOUT_OC_WARN_LIMIT = 35.00;
-        config.TPS546_INIT_IOUT_OC_FAULT_LIMIT = 40.00;
+        config.TPS546_INIT_VOUT_MAX = 4;
+        config.TPS546_INIT_VOUT_COMMAND = 3.6;
+        config.TPS546_INIT_IOUT_OC_WARN_LIMIT = 45.00;
+        config.TPS546_INIT_IOUT_OC_FAULT_LIMIT = 50.00;
         // Single-phase configuration
         config.TPS546_INIT_STACK_CONFIG = 0x0000; // 1 module
         config.TPS546_INIT_SYNC_CONFIG = 0x10;    // Disable SYNC
