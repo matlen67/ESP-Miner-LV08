@@ -716,7 +716,7 @@ int TPS546_get_temperature(int8_t i2c_addr)
 
     if (smb_read_word(PMBUS_READ_TEMPERATURE_1, &value, i2c_addr) != ESP_OK) {
         ESP_LOGE(TAG, "Could not read temperature");
-        return last_temp;
+        return last_temp[i2c_addr];
     }
     
     temp = slinear11_2_int(value);
