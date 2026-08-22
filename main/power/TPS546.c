@@ -80,7 +80,7 @@ static esp_err_t smb_write_addr(uint8_t command, int8_t i2c_addr)
  * @param command The command to read
  * @param result Pointer to store the read data
  */
-static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int8_t i2c_add)
+static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int8_t i2c_addr)
 {
     uint8_t data[2];
     if (i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, data, 2) != ESP_OK) {
