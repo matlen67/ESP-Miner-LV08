@@ -367,12 +367,6 @@
             <h6 class="flex justify-between mb-1" tooltipPosition="top"
                 appTooltip="{{info.fan2rpm > 0 ? 'Fan 1: ' : ''}}{{info.fanrpm}} RPM{{info.fan2rpm > 0 ? '<br>Fan 2: ' + info.fan2rpm + ' RPM' : ''}}">
 
-              @if (info.fan2rpm > 0) {
-                Fan Speeds
-              } @else {
-                Fan Speed
-              }
-
               <ng-container *ngIf="info.fan2rpm > 0; else singleFan">
                     Fan 1
               </ng-container>
