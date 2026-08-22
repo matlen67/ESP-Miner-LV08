@@ -205,7 +205,7 @@ esp_err_t VCORE_set_voltage(GlobalState * GLOBAL_STATE, float core_voltage)
     }
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         uint16_t voltage_domains = GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains;
-        ESP_RETURN_ON_ERROR(TPS546_set_vout(core_voltage * voltage_domains), TAG, "TPS546 set voltage failed!");
+        ESP_RETURN_ON_ERROR(TPS546_set_vout(core_voltage * voltage_domains,0), TAG, "TPS546 set voltage failed!");
     }
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         uint16_t voltage_domains = GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains;
