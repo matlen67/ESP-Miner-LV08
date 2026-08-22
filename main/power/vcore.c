@@ -231,9 +231,12 @@ int16_t VCORE_get_voltage_mv(GlobalState * GLOBAL_STATE)
             if (v > vmax)
                 vmax = v;
         }
-        
         return vmax / GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains * 1000.0f;
+    }
+    
+    return ADC_get_vcore();
 }
+
 
 esp_err_t VCORE_check_fault(GlobalState * GLOBAL_STATE)
 {
