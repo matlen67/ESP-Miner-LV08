@@ -350,7 +350,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
     tps546_config = config;
 
     ESP_LOGI(TAG, "Initializing the core voltage regulator");
-    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2CADDR[i2c_addr], &tps546_i2c_handle[i2c_addr], TAG), TAG, "Failed to add TPS546 I2C");
+    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2C_ADDR[i2c_addr], &tps546_i2c_handle[i2c_addr], TAG), TAG, "Failed to add TPS546 I2C");
 
     // 1) Power-up guard (PMBus ready after AVIN UVLO + ~8 ms)
     vTaskDelay(pdMS_TO_TICKS(15));  // conservative
@@ -1014,7 +1014,7 @@ static esp_err_t TPS546_parse_status(uint16_t status, int8_t i2c_addr) {
  * send a 0 to turn off the output
  * @param volts The desired output voltage
 **/
-esp_err_t TPS546_set_vout(float volts) {
+esp_err_t TPS546_set_vout(float volts, int8_t i2c_addr) {
     uint16_t value;
     uint8_t value8;
 
