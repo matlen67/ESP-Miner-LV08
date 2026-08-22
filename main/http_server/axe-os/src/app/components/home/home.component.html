@@ -364,34 +364,33 @@
           <h4 class="text-center font-medium">Fan</h4>
 
           <div class="mb-4">
-            <h6 class="flex justify-between mb-1" tooltipPosition="top"
-                appTooltip="{{info.fan2rpm > 0 ? 'Fan 1: ' : ''}}{{info.fanrpm}} RPM{{info.fan2rpm > 0 ? '<br>Fan 2: ' + info.fan2rpm + ' RPM' : ''}}">
-
-              <ng-container *ngIf="info.fan2rpm > 0; else singleFan">
-                    Fan 1
-              </ng-container>
-              <ng-template #singleFan>
-                    Fan Speed
-              </ng-template>
+            <h6 class="flex justify-between mb-1" >
+			
+				@if (info.fan2rpm > 0){
+					Fan 1
+					} @else {
+					Fan Speed
+					}
+					
                 <span>
-                  <ng-container *ngIf="info.fanrpm > 0; else noValue">
                       {{info.fanrpm}} RPM
-                  </ng-container>
                 </span>
             </h6>
             <app-progressbar [value]="(info.fanrpm / maxRpm) * 100"></app-progressbar>
           </div>
-          <div *ngIf="info.fan2rpm > 0">
-              <h6 class="flex justify-content-between mb-1">
-                  Fan 2
-                  <span>
-                      <ng-container *ngIf="info.fan2rpm > 0; else noValue">
-                          {{info.fan2rpm}} RPM
-                      </ng-container>
-                  </span>
+            
+			@if (info.fan2rpm > 0) {
+				<div class="mb-4">
+				<h6 class="flex justify-between mb-1">
+                Fan 2
+                <span>
+                  {{info.fan2rpm}} RPM
+                </span>
               </h6>
               <app-progressbar [value]="(info.fan2rpm / maxRpm) * 100"></app-progressbar>          
           </div>
+		  }
+		  
         </div>
       </div>
     </div>
