@@ -78,6 +78,8 @@ typedef struct DeviceConfig {
     bool DS4432U : 1;
     bool INA260  : 1;
     bool TPS546  : 1;
+    bool TPS546_LV08  : 1;
+
     // test values
     uint16_t power_consumption_target;
 } DeviceConfig;
