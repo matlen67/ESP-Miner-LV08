@@ -356,25 +356,39 @@
     </div>
 
     <!-- Fan -->
-    <div class="grid-stack-item" gs-id="fan">
+     <div class="grid-stack-item" gs-id="fan">
       <div class="grid-stack-item-content">
         <div class="card">
           <h4 class="text-center font-medium">Fan</h4>
 
           <div class="mb-4">
-            <h6 class="flex justify-between mb-1" tooltipPosition="top"
-                appTooltip="{{info.fan2rpm > 0 ? 'Fan 1: ' : ''}}{{info.fanrpm}} RPM{{info.fan2rpm > 0 ? '<br>Fan 2: ' + info.fan2rpm + ' RPM' : ''}}">
-
-              @if (info.fan2rpm > 0) {
-                Fan Speeds
-              } @else {
-                Fan Speed
-              }
-
-              <span>{{info.fanspeed.toFixed(1)}} %</span>
+            <h6 class="flex justify-between mb-1" >
+			
+				@if (info.fan2rpm > 0){
+					Fan 1
+					} @else {
+					Fan Speed
+					}
+					
+                <span>
+                      {{info.fanrpm}} RPM
+                </span>
             </h6>
-            <app-progressbar [value]="info.fanspeed"></app-progressbar>
+            <app-progressbar [value]="(info.fanrpm / maxRpm) * 100"></app-progressbar>
           </div>
+            
+			@if (info.fan2rpm > 0) {
+				<div class="mb-4">
+				<h6 class="flex justify-between mb-1">
+                Fan 2
+                <span>
+                  {{info.fan2rpm}} RPM
+                </span>
+              </h6>
+              <app-progressbar [value]="(info.fan2rpm / maxRpm) * 100"></app-progressbar>          
+          </div>
+		  }
+		  
         </div>
       </div>
     </div>
