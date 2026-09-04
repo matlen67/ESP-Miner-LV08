@@ -458,7 +458,7 @@ esp_err_t test_vreg_faults(GlobalState * GLOBAL_STATE)
  *
  * @param pvParameters Pointer to the parameters passed to the task (if any).
  */
-void self_test_task(void * pvParameters)
+void self_test_task(void * pvParameters, int8_t i2c_addr)
 {
     GlobalState * GLOBAL_STATE = (GlobalState *) pvParameters;
 
@@ -744,7 +744,7 @@ void self_test_task(void * pvParameters)
         tests_done(GLOBAL_STATE, false);
     }
 
-    if (test_power_consumption(GLOBAL_STATE) != ESP_OK) {
+    if (test_power_consumption(GLOBAL_STATE, i2c_addr) != ESP_OK) {
         ESP_LOGE(TAG, "Power Draw Failed, target %.2f W", (float) GLOBAL_STATE->DEVICE_CONFIG.power_consumption_target);
         self_test_show_message(GLOBAL_STATE, "POWER:FAIL");
         tests_done(GLOBAL_STATE, false);
