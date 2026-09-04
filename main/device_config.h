@@ -50,6 +50,7 @@ typedef struct AsicConfig {
 
 typedef enum
 {
+    LV08,
     MAX,
     ULTRA,
     HEX,
@@ -96,6 +97,7 @@ typedef struct DeviceConfig {
     bool DS4432U : 1;
     bool INA260  : 1;
     bool TPS546  : 1;
+    bool TPS546_LV08  : 1;
     // test values
     uint16_t power_consumption_target;
     uint16_t power_consumption_margin;
@@ -132,6 +134,7 @@ static const AsicConfig default_asic_configs[] = {
     ASIC_BM1373,
 };
 
+static const FamilyConfig FAMILY_LV08        = { .id = LV08,        .name = "LV08",       .asic = ASIC_BM1366,   .asic_count = 9, .max_power = 140, .power_offset = 18, .nominal_voltage = 12, .voltage_domains = 1, .swarm_color = "orange",   };
 static const FamilyConfig FAMILY_MAX         = { .id = MAX,         .name = "Max",        .asic = ASIC_BM1397,   .asic_count = 1, .max_power =  25, .power_offset = 5,  .nominal_voltage = 5,  .voltage_domains = 1, .swarm_color = "red",      .tps546_config = &TPS546_CONFIG_DEFAULT, };
 static const FamilyConfig FAMILY_ULTRA       = { .id = ULTRA,       .name = "Ultra",      .asic = ASIC_BM1366,   .asic_count = 1, .max_power =  25, .power_offset = 5,  .nominal_voltage = 5,  .voltage_domains = 1, .swarm_color = "purple",   .tps546_config = &TPS546_CONFIG_DEFAULT, };
 static const FamilyConfig FAMILY_HEX         = { .id = HEX,         .name = "Hex",        .asic = ASIC_BM1366,   .asic_count = 6, .max_power =  90, .power_offset = 12, .nominal_voltage = 12, .voltage_domains = 3, .swarm_color = "orange",   .tps546_config = &TPS546_CONFIG_HEX, };
@@ -144,6 +147,7 @@ static const FamilyConfig FAMILY_NAJA_DUO    = { .id = NAJA_DUO,    .name = "Naj
 static const FamilyConfig FAMILY_GAMMA_HEX   = { .id = GAMMA_HEX,   .name = "GammaHex",   .asic = ASIC_BM1370_HEX, .asic_count = 6, .max_power = 180, .power_offset = 25, .nominal_voltage = 12, .voltage_domains = GAMMA_HEX_VOLTAGE_DOMAINS, .swarm_color = "cyan", .tps546_config = &TPS546_CONFIG_GAMMA_HEX, };
 
 static const FamilyConfig default_families[] = {
+    FAMILY_LV08,
     FAMILY_MAX,
     FAMILY_ULTRA,
     FAMILY_HEX,
@@ -156,6 +160,7 @@ static const FamilyConfig default_families[] = {
 };
 
 static const DeviceConfig default_configs[] = {
+    { .board_version = "302",  .family = FAMILY_LV08,        .EMC2302 = true, .TMP1075 = true,                                                                          .temp_offset = 5,   .TPS546_LV08 = true,                                                      .power_consumption_target = 140,},
     { .board_version = "2.2",  .family = FAMILY_MAX,         .pins = BITAXE_ORIGINAL_PINS, .EMC2101 = true,                                                                                 .DS4432U = true, .INA260 = true, .plug_sense = true, .asic_enable = true, .power_consumption_target = 12, },
     { .board_version = "102",  .family = FAMILY_MAX,         .pins = BITAXE_ORIGINAL_PINS, .EMC2101 = true,                                                                                 .DS4432U = true, .INA260 = true, .plug_sense = true, .asic_enable = true, .power_consumption_target = 12, },
     { .board_version = "0.11", .family = FAMILY_ULTRA,       .pins = BITAXE_ORIGINAL_PINS, .EMC2101 = true, .emc_internal_temp = true,                                  .temp_offset = 5,   .DS4432U = true, .INA260 = true, .plug_sense = true, .asic_enable = true, .power_consumption_target = 12, },
