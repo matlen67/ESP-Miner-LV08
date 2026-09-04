@@ -212,7 +212,7 @@ float TPS546_get_vout(int8_t i2c_addr);
 esp_err_t TPS546_set_vout(float volts, int8_t i2c_addr);
 void TPS546_show_voltage_settings(int8_t i2c_addr);
 void TPS546_print_status(int8_t i2c_addr);
-esp_err_t TPS546_check_phase_currents(uint8_t phase_count, float minimum_current_a, int8_t i2c_addr);
+esp_err_t TPS546_check_phase_currents(uint8_t phase_count, float minimum_current_a);
 uint8_t TPS546_get_phase_count(int8_t i2c_addr);
 
 esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE, int8_t i2c_addr);
