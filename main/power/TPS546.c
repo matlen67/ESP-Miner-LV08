@@ -993,7 +993,7 @@ esp_err_t TPS546_check_phase_currents(uint8_t phase_count, float minimum_current
 uint8_t TPS546_get_phase_count(int8_t i2c_addr)
 {
     uint16_t stack_config = 0;
-    if (smb_read_word(PMBUS_STACK_CONFIG, &stack_config) == ESP_OK, i2c_addr) {
+    if (smb_read_word(PMBUS_STACK_CONFIG, &stack_config, i2c_addr) == ESP_OK) {
         return (stack_config & 0x07) + 1;
     }
     return (tps546_config.TPS546_INIT_STACK_CONFIG & 0x07) + 1;
