@@ -143,9 +143,18 @@ esp_err_t VCORE_init(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.INA260) {
         ESP_RETURN_ON_ERROR(INA260_init(), TAG, "INA260 init failed!");
     }
-    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546 || GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         TPS546_CONFIG tps_config = get_tps546_config(&GLOBAL_STATE->DEVICE_CONFIG.family);
-        ESP_RETURN_ON_ERROR(TPS546_init(tps_config), TAG, "TPS546 init failed!");
+        switch (GLOBAL_STATE->DEVICE_CONFIG.family.id) {
+            case LV08:
+                for (int addr = 0; addr < 3; addr++) {
+                    ESP_RETURN_ON_ERROR(TPS546_init(tps_config, addr), TAG, "TPS546 init failed!");
+                }
+                break;
+            default:
+                ESP_RETURN_ON_ERROR(TPS546_init(tps_config, 0), TAG, "TPS546 init failed!");
+                break;
+        }
     }
 
     vcore_initialized = true;
@@ -181,6 +190,12 @@ esp_err_t VCORE_set_voltage(GlobalState * GLOBAL_STATE, float core_voltage)
         uint16_t voltage_domains = GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains;
         ESP_RETURN_ON_ERROR(TPS546_set_vout(core_voltage * voltage_domains), TAG, "TPS546 set voltage failed!");
     }
+     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+        uint16_t voltage_domains = GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains;
+        for (int addr = 0; addr < 3; addr++) {
+            ESP_RETURN_ON_ERROR(TPS546_set_vout(core_voltage * voltage_domains, addr), TAG, "TPS546 set voltage failed!");
+        }
+    }
 
     return ESP_OK;
 }
@@ -190,6 +205,18 @@ int16_t VCORE_get_voltage_mv(GlobalState * GLOBAL_STATE)
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         return TPS546_get_vout() / GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains * 1000;
     }
+
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+        float vmax = TPS546_get_vout(0);
+
+        for (int addr = 1; addr < 3; addr++) {
+            float v = TPS546_get_vout(addr);
+            if (v > vmax)
+                vmax = v;
+        }
+        return vmax / GLOBAL_STATE->DEVICE_CONFIG.family.voltage_domains * 1000.0f;
+    }
+    
     return ADC_get_vcore();
 }
 
@@ -197,6 +224,11 @@ esp_err_t VCORE_check_fault(GlobalState * GLOBAL_STATE)
 {
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
         ESP_RETURN_ON_ERROR(TPS546_check_status(GLOBAL_STATE), TAG, "TPS546 check status failed!");
+    }
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
+        for (int addr = 0; addr < 3; addr++) {
+            ESP_RETURN_ON_ERROR(TPS546_check_status(GLOBAL_STATE, addr), TAG, "TPS546 check status failed!");
+        }
     }
     return ESP_OK;
 }
@@ -211,7 +243,7 @@ const char * VCORE_get_fault_string(GlobalState * GLOBAL_STATE)
 
 uint8_t VCORE_get_phase_count(GlobalState * GLOBAL_STATE)
 {
-    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
+    if (GLOBAL_STATE->DEVICE_CONFIG.TPS546 || GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         return TPS546_get_phase_count();
     }
     return 1;
