@@ -949,10 +949,10 @@ float TPS546_get_vout(int8_t i2c_addr)
     }
 }
 
-esp_err_t TPS546_check_phase_currents(uint8_t phase_count, float minimum_current_a, int8_t i2c_addr)
+esp_err_t TPS546_check_phase_currents(uint8_t phase_count, float minimum_current_a)
 {
     uint8_t original_phase = 0;
-    esp_err_t result = smb_read_byte(PMBUS_PHASE, &original_phase, i2c_addr);
+    esp_err_t result = smb_read_byte(PMBUS_PHASE, &original_phase, 0);
     if (result != ESP_OK) {
         ESP_LOGE(TAG, "Could not read PHASE before buck participation test");
         return result;
@@ -980,7 +980,7 @@ esp_err_t TPS546_check_phase_currents(uint8_t phase_count, float minimum_current
         }
     }
 
-    esp_err_t restore_result = smb_write_byte(PMBUS_PHASE, original_phase, i2c_addr);
+    esp_err_t restore_result = smb_write_byte(PMBUS_PHASE, original_phase, 0);
     if (restore_result != ESP_OK) {
         ESP_LOGE(TAG, "Could not restore PHASE=0x%02X after buck participation test: %s",
                  original_phase, esp_err_to_name(restore_result));
