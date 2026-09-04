@@ -368,7 +368,7 @@ static esp_err_t test_fan_sense(GlobalState * GLOBAL_STATE)
     return ESP_FAIL;
 }
 
-static esp_err_t test_power_consumption(GlobalState * GLOBAL_STATE)
+static esp_err_t test_power_consumption(GlobalState * GLOBAL_STATE, int8_t i2c_addr)
 {
     float target_power = (float) GLOBAL_STATE->DEVICE_CONFIG.power_consumption_target;
     float margin = (float) GLOBAL_STATE->DEVICE_CONFIG.power_consumption_margin;
@@ -382,7 +382,7 @@ static esp_err_t test_power_consumption(GlobalState * GLOBAL_STATE)
 
     uint8_t phase_count = VCORE_get_phase_count(GLOBAL_STATE);
     if (phase_count > 1 &&
-        TPS546_check_phase_currents(phase_count, MULTIPHASE_BUCK_MIN_CURRENT_A) != ESP_OK) {
+        TPS546_check_phase_currents(phase_count, MULTIPHASE_BUCK_MIN_CURRENT_A, i2c_addr) != ESP_OK) {
         ESP_LOGE(TAG, "MULTIPHASE BUCK test failed!");
         self_test_show_message(GLOBAL_STATE, "BUCK:FAIL");
         return ESP_FAIL;
