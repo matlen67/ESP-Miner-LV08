@@ -368,7 +368,7 @@ static esp_err_t test_fan_sense(GlobalState * GLOBAL_STATE)
     return ESP_FAIL;
 }
 
-static esp_err_t test_power_consumption(GlobalState * GLOBAL_STATE, int8_t i2c_addr)
+static esp_err_t test_power_consumption(GlobalState * GLOBAL_STATE)
 {
     float target_power = (float) GLOBAL_STATE->DEVICE_CONFIG.power_consumption_target;
     float margin = (float) GLOBAL_STATE->DEVICE_CONFIG.power_consumption_margin;
@@ -382,7 +382,7 @@ static esp_err_t test_power_consumption(GlobalState * GLOBAL_STATE, int8_t i2c_a
 
     uint8_t phase_count = VCORE_get_phase_count(GLOBAL_STATE);
     if (phase_count > 1 &&
-        TPS546_check_phase_currents(phase_count, MULTIPHASE_BUCK_MIN_CURRENT_A, i2c_addr) != ESP_OK) {
+        TPS546_check_phase_currents(phase_count, MULTIPHASE_BUCK_MIN_CURRENT_A) != ESP_OK) {
         ESP_LOGE(TAG, "MULTIPHASE BUCK test failed!");
         self_test_show_message(GLOBAL_STATE, "BUCK:FAIL");
         return ESP_FAIL;
@@ -458,7 +458,7 @@ esp_err_t test_vreg_faults(GlobalState * GLOBAL_STATE)
  *
  * @param pvParameters Pointer to the parameters passed to the task (if any).
  */
-void self_test_task(void * pvParameters, int8_t i2c_addr)
+void self_test_task(void * pvParameters)
 {
     GlobalState * GLOBAL_STATE = (GlobalState *) pvParameters;
 
@@ -744,7 +744,7 @@ void self_test_task(void * pvParameters, int8_t i2c_addr)
         tests_done(GLOBAL_STATE, false);
     }
 
-    if (test_power_consumption(GLOBAL_STATE, i2c_addr) != ESP_OK) {
+    if (test_power_consumption(GLOBAL_STATE) != ESP_OK) {
         ESP_LOGE(TAG, "Power Draw Failed, target %.2f W", (float) GLOBAL_STATE->DEVICE_CONFIG.power_consumption_target);
         self_test_show_message(GLOBAL_STATE, "POWER:FAIL");
         tests_done(GLOBAL_STATE, false);
