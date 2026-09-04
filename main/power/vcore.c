@@ -223,7 +223,7 @@ int16_t VCORE_get_voltage_mv(GlobalState * GLOBAL_STATE)
 esp_err_t VCORE_check_fault(GlobalState * GLOBAL_STATE)
 {
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546) {
-        ESP_RETURN_ON_ERROR(TPS546_check_status(GLOBAL_STATE), TAG, "TPS546 check status failed!");
+        ESP_RETURN_ON_ERROR(TPS546_check_status(GLOBAL_STATE,0), TAG, "TPS546 check status failed!");
     }
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
         for (int addr = 0; addr < 3; addr++) {
@@ -244,7 +244,7 @@ const char * VCORE_get_fault_string(GlobalState * GLOBAL_STATE)
 uint8_t VCORE_get_phase_count(GlobalState * GLOBAL_STATE)
 {
     if (GLOBAL_STATE->DEVICE_CONFIG.TPS546 || GLOBAL_STATE->DEVICE_CONFIG.TPS546_LV08) {
-        return TPS546_get_phase_count();
+        return TPS546_get_phase_count(0);
     }
     return 1;
 }
