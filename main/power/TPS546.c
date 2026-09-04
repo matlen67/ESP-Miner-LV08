@@ -157,14 +157,14 @@ static float last_vout = 0.0f;
 static int last_temp = 0;
 
 
-static esp_err_t TPS546_parse_status(uint16_t, int8_t);
+static esp_err_t TPS546_parse_status(uint16_t, int8_t i2c_addr));
 
 static esp_err_t TPS546_read_alert_response(uint8_t *alert_response)
 {
-    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2CADDR_ALERT, &tps546_alert_i2c_handle, "TPS546_ALERT"),
+    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2CADDR_ALERT, &tps546_alert_i2c_handle[i2c_addr], "TPS546_ALERT"),
                         TAG, "Failed to add TPS546 SMBus alert address");
 
-    return i2c_master_receive(tps546_alert_i2c_handle, alert_response, 1, TPS546_I2C_TIMEOUT_MS);
+    return i2c_master_receive(tps546_alert_i2c_handle[i2c_addr], alert_response, 1, TPS546_I2C_TIMEOUT_MS);
 }
 
 /**
@@ -172,9 +172,9 @@ static esp_err_t TPS546_read_alert_response(uint8_t *alert_response)
  * @param command The command to read
  * @param data Pointer to store the read data
  */
-static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, int8_t i2c_addr)
+static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, , int8_t i2c_addr)
 {
-    return i2c_bitaxe_register_read(tps546_i2c_handle, command, data, 1);
+    return i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, data, 1);
 }
 
 /**
@@ -184,7 +184,7 @@ static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, int8_t i2c_addr)
  */
 static esp_err_t smb_write_byte(uint8_t command, uint8_t data, int8_t i2c_addr)
 {
-    return i2c_bitaxe_register_write_byte(tps546_i2c_handle, command, data);
+    return i2c_bitaxe_register_write_byte(tps546_i2c_handle[i2c_addr], command, data);
 }
 
 /**
@@ -193,7 +193,7 @@ static esp_err_t smb_write_byte(uint8_t command, uint8_t data, int8_t i2c_addr)
  */
 static esp_err_t smb_write_addr(uint8_t command, int8_t i2c_addr)
 {
-    return i2c_bitaxe_register_write_addr(tps546_i2c_handle, command);
+    return i2c_bitaxe_register_write_addr(tps546_i2c_handle[i2c_addr], command);
 }
 
 /**
@@ -204,7 +204,7 @@ static esp_err_t smb_write_addr(uint8_t command, int8_t i2c_addr)
 static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int8_t i2c_addr)
 {
     uint8_t data[2];
-    if (i2c_bitaxe_register_read(tps546_i2c_handle, command, data, 2) != ESP_OK) {
+    if (i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, data, 2) != ESP_OK) {
         return ESP_FAIL;
     } else {
         *result = (data[1] << 8) + data[0];
@@ -219,7 +219,7 @@ static esp_err_t smb_read_word(uint8_t command, uint16_t *result, int8_t i2c_add
  */
 static esp_err_t smb_write_word(uint8_t command, uint16_t data, int8_t i2c_addr)
 {
-    return i2c_bitaxe_register_write_word(tps546_i2c_handle, command, data);
+    return i2c_bitaxe_register_write_word(tps546_i2c_handle[i2c_addr], command, data);
 }
 
 /**
@@ -232,7 +232,7 @@ static esp_err_t smb_read_block(uint8_t command, uint8_t *data, uint8_t len, int
 {
     //malloc a buffer len+1 to store the length byte
     uint8_t *buf = (uint8_t *)malloc(len+1);
-    if (i2c_bitaxe_register_read(tps546_i2c_handle, command, buf, len+1) != ESP_OK) {
+    if (i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, buf, len+1) != ESP_OK) {
         free(buf);
         return ESP_FAIL;
     }
@@ -259,7 +259,7 @@ static esp_err_t smb_write_block(uint8_t command, uint8_t *data, uint8_t len, in
     memcpy(buf+2, data, len);
 
     //write it all
-    if (i2c_bitaxe_register_write_bytes(tps546_i2c_handle, buf, len+2) != ESP_OK) {
+    if (i2c_bitaxe_register_write_bytes(tps546_i2c_handle[i2c_addr], buf, len+2) != ESP_OK) {
         free(buf);
         return ESP_FAIL;
     } else {
@@ -1074,7 +1074,7 @@ static esp_err_t TPS546_parse_status(uint16_t status) {
         ESP_LOGE(TAG, "A temperature fault/warning has occurred");
 
         //the host should check STATUS_TEMPERATURE for more information.
-        if (smb_read_byte(PMBUS_STATUS_TEMPERATURE, &u8_value) != ESP_OK) {
+        if (smb_read_byte(PMBUS_STATUS_TEMPERATURE, &u8_value, i2c_addr) != ESP_OK) {
             ESP_LOGE(TAG, "Could not read STATUS_TEMPERATURE");
             return ESP_FAIL;
         } else {
@@ -1092,7 +1092,7 @@ static esp_err_t TPS546_parse_status(uint16_t status) {
         ESP_LOGE(TAG, "A communication, memory, logic fault has occurred");
 
         //the host should check STATUS_CML for more information.
-        if (smb_read_byte(PMBUS_STATUS_CML, &u8_value) != ESP_OK) {
+        if (smb_read_byte(PMBUS_STATUS_CML, &u8_value, i2c_addr) != ESP_OK) {
             ESP_LOGE(TAG, "Could not read STATUS_CML");
             return ESP_FAIL;
         } else {
