@@ -157,7 +157,7 @@ static float last_vout = 0.0f;
 static int last_temp = 0;
 
 
-static esp_err_t TPS546_parse_status(uint16_t, int8_t i2c_addr));
+static esp_err_t TPS546_parse_status(uint16_t, int8_t i2c_addr);
 
 static esp_err_t TPS546_read_alert_response(uint8_t *alert_response)
 {
