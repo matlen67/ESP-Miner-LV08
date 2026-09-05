@@ -581,7 +581,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
     /* Show voltage settings */
     TPS546_show_voltage_settings(i2c_addr);
 
-    smb_read_word(PMBUS_STATUS_WORD, &u16_value);
+    smb_read_word(PMBUS_STATUS_WORD, &u16_value, i2c_addr);
     ESP_LOGI(TAG, "read STATUS_WORD: %04x", u16_value);
 
     ESP_LOGI(TAG, "-----------VOLTAGE/CURRENT---------------------");
@@ -738,11 +738,11 @@ void TPS546_write_entire_config(int8_t i2c_addr)
             uint8_t status_cml = 0;
             uint16_t status_word = 0;
 
-            if (smb_read_byte(PMBUS_STATUS_CML, &status_cml) == ESP_OK) {
+            if (smb_read_byte(PMBUS_STATUS_CML, &status_cml, i2c_addr) == ESP_OK) {
                 ESP_LOGE(TAG, "COMPENSATION_CONFIG write failed; STATUS_CML=%02X", status_cml);
             }
 
-            if (smb_read_word(PMBUS_STATUS_WORD, &status_word) == ESP_OK) {
+            if (smb_read_word(PMBUS_STATUS_WORD, &status_word, i2c_addr) == ESP_OK) {
                 ESP_LOGE(TAG, "COMPENSATION_CONFIG write failed; STATUS_WORD=%04X", status_word);
             }
         } else {
@@ -784,7 +784,7 @@ void TPS546_write_entire_config(int8_t i2c_addr)
     ESP_LOGI(TAG, "Setting VOUT_MIN: %.2fV", tps546_config.TPS546_INIT_VOUT_MIN);
     smb_write_word(PMBUS_VOUT_MIN, float_2_ulinear16(tps546_config.TPS546_INIT_VOUT_MIN, i2c_addr), i2c_addr);
 
-    if (TPS546_write_vout_limit_ratios(tps546_config.TPS546_INIT_VOUT_COMMAND) != ESP_OK) {
+    if (TPS546_write_vout_limit_ratios(tps546_config.TPS546_INIT_VOUT_COMMAND, i2c_addr) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to write VOUT limit ratios");
     }
 
@@ -797,7 +797,7 @@ void TPS546_write_entire_config(int8_t i2c_addr)
     smb_write_word(PMBUS_IOUT_OC_FAULT_LIMIT, float_2_slinear11(tps546_config.TPS546_INIT_IOUT_OC_FAULT_LIMIT), i2c_addr);
 
     ESP_LOGI(TAG, "Setting IOUT_OC_FAULT_RESPONSE: %02x", TPS546_INIT_IOUT_OC_FAULT_RESPONSE);
-    smb_write_byte(PMBUS_IOUT_OC_FAULT_RESPONSE, TPS546_INIT_IOUT_OC_FAULT_RESPONSE);
+    smb_write_byte(PMBUS_IOUT_OC_FAULT_RESPONSE, TPS546_INIT_IOUT_OC_FAULT_RESPONSE, i2c_addr);
 
     /* temperature */
     ESP_LOGI(TAG, "----- TEMPERATURE");
