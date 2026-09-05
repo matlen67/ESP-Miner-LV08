@@ -172,7 +172,7 @@ static esp_err_t TPS546_read_alert_response(uint8_t *alert_response)
  * @param command The command to read
  * @param data Pointer to store the read data
  */
-static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, , int8_t i2c_addr)
+static esp_err_t smb_read_byte(uint8_t command, uint8_t *data, int8_t i2c_addr)
 {
     return i2c_bitaxe_register_read(tps546_i2c_handle[i2c_addr], command, data, 1);
 }
@@ -416,7 +416,7 @@ static float ulinear16_2_float(uint16_t value, int8_t i2c_addr)
     int exponent;
     float result;
 
-    smb_read_byte(PMBUS_VOUT_MODE, &voutmode);
+    smb_read_byte(PMBUS_VOUT_MODE, &voutmode, i2c_addr);
 
     if (voutmode & 0x10) {
         // exponent is negative
@@ -441,7 +441,7 @@ static uint16_t float_2_ulinear16(float value, int8_t i2c_addr)
     float exponent;
     uint16_t result;
 
-    smb_read_byte(PMBUS_VOUT_MODE, &voutmode);
+    smb_read_byte(PMBUS_VOUT_MODE, &voutmode, i2c_addr);
     if (voutmode & 0x10) {
         // exponent is negative
         exponent = -1 * ((~voutmode & 0x1F) + 1);
@@ -515,7 +515,7 @@ esp_err_t TPS546_init(TPS546_CONFIG config, int8_t i2c_addr)
         ESP_LOGI(TAG, "No SMBus alert response read: %s", esp_err_to_name(alert_err));
     }
 
-    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2CADDR, &tps546_i2c_handle, TAG), TAG, "Failed to add TPS546 I2C");
+    ESP_RETURN_ON_ERROR(i2c_bitaxe_add_device(TPS546_I2CADDR[i2c_addr], &tps546_i2c_handle[i2c_addr], TAG), TAG, "Failed to add TPS546 I2C");
 
     // 1) Power-up guard (PMBus ready after AVIN UVLO + ~8 ms)
     vTaskDelay(pdMS_TO_TICKS(15));  // conservative
