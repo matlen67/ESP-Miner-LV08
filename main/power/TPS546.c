@@ -454,36 +454,36 @@ static uint16_t float_2_ulinear16(float value, int8_t i2c_addr)
     return result;
 }
 
-static esp_err_t TPS546_write_vout_limit_ratios(float vout_command)
+static esp_err_t TPS546_write_vout_limit_ratios(float vout_command, int8_t i2c_addr)
 {
     ESP_LOGI(TAG, "Setting VOUT_OV_FAULT_LIMIT: %.2fx (%.2fV)", TPS546_INIT_VOUT_OV_FAULT_LIMIT,
              vout_command * TPS546_INIT_VOUT_OV_FAULT_LIMIT);
-    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_OV_FAULT_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_OV_FAULT_LIMIT)),
+    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_OV_FAULT_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_OV_FAULT_LIMIT, i2c_addr), i2c_addr),
                         TAG, "Failed to write VOUT_OV_FAULT_LIMIT");
 
     ESP_LOGI(TAG, "Setting VOUT_OV_WARN_LIMIT: %.2fx (%.2fV)", TPS546_INIT_VOUT_OV_WARN_LIMIT,
              vout_command * TPS546_INIT_VOUT_OV_WARN_LIMIT);
-    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_OV_WARN_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_OV_WARN_LIMIT)),
+    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_OV_WARN_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_OV_WARN_LIMIT, i2c_addr), i2c_addr),
                         TAG, "Failed to write VOUT_OV_WARN_LIMIT");
 
     ESP_LOGI(TAG, "Setting VOUT_MARGIN_HIGH: %.2fx (%.2fV)", TPS546_INIT_VOUT_MARGIN_HIGH,
              vout_command * TPS546_INIT_VOUT_MARGIN_HIGH);
-    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_MARGIN_HIGH, float_2_ulinear16(TPS546_INIT_VOUT_MARGIN_HIGH)),
+    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_MARGIN_HIGH, float_2_ulinear16(TPS546_INIT_VOUT_MARGIN_HIGH, i2c_addr), i2c_addr),
                         TAG, "Failed to write VOUT_MARGIN_HIGH");
 
     ESP_LOGI(TAG, "Setting VOUT_MARGIN_LOW: %.2fx (%.2fV)", TPS546_INIT_VOUT_MARGIN_LOW,
              vout_command * TPS546_INIT_VOUT_MARGIN_LOW);
-    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_MARGIN_LOW, float_2_ulinear16(TPS546_INIT_VOUT_MARGIN_LOW)),
+    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_MARGIN_LOW, float_2_ulinear16(TPS546_INIT_VOUT_MARGIN_LOW, i2c_addr), i2c_addr),
                         TAG, "Failed to write VOUT_MARGIN_LOW");
 
     ESP_LOGI(TAG, "Setting VOUT_UV_WARN_LIMIT: %.2fx (%.2fV)", TPS546_INIT_VOUT_UV_WARN_LIMIT,
              vout_command * TPS546_INIT_VOUT_UV_WARN_LIMIT);
-    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_UV_WARN_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_UV_WARN_LIMIT)),
+    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_UV_WARN_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_UV_WARN_LIMIT, i2c_addr), i2c_addr),
                         TAG, "Failed to write VOUT_UV_WARN_LIMIT");
 
     ESP_LOGI(TAG, "Setting VOUT_UV_FAULT_LIMIT: %.2fx (%.2fV)", TPS546_INIT_VOUT_UV_FAULT_LIMIT,
              vout_command * TPS546_INIT_VOUT_UV_FAULT_LIMIT);
-    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_UV_FAULT_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_UV_FAULT_LIMIT)),
+    ESP_RETURN_ON_ERROR(smb_write_word(PMBUS_VOUT_UV_FAULT_LIMIT, float_2_ulinear16(TPS546_INIT_VOUT_UV_FAULT_LIMIT, i2c_addr), i2c_addr),
                         TAG, "Failed to write VOUT_UV_FAULT_LIMIT");
 
     return ESP_OK;
