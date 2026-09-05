@@ -144,11 +144,11 @@ static uint8_t DEVICE_ID_TPS546D24S[] = {0x54, 0x49, 0x54, 0x6D, 0x24, 0x62};
 // static uint8_t DEVICE_ID_TPS546B24A[] = {0x54, 0x49, 0x54, 0x6B, 0x24, 0x41};
 // static uint8_t DEVICE_ID_TPS546B24S[] = {0x54, 0x49, 0x54, 0x6B, 0x24, 0x62};
 
-static i2c_master_dev_handle_t tps546_i2c_handle;
+static i2c_master_dev_handle_t tps546_i2c_handle[i2c_addr];
 
 static TPS546_CONFIG tps546_config;
 static TickType_t tps546_power_good_grace_until = 0;
-static i2c_master_dev_handle_t tps546_alert_i2c_handle;
+static i2c_master_dev_handle_t tps546_alert_i2c_handle[i2c_addr];
 
 // Cached values to handle I2C failures robustly
 static float last_vin = 0.0f;
