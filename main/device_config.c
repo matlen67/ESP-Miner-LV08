@@ -15,6 +15,13 @@ esp_err_t device_config_init(GlobalState * GLOBAL_STATE)
     char * board_version = nvs_config_get_string(NVS_CONFIG_BOARD_VERSION);
     bool found_default = false;
 
+    // @matlen67 change the config board version in NVS from 302 to 303
+    if (board_version == '302'){
+        ESP_LOGI("matlen67 -> ", "detect boardversion = 302 in NVS");
+        nvs_config_set_string(NVS_CONFIG_BOARD_VERSION, "303");
+        ESP_LOGI("matlen67 -> ", "change boardversion to 303");
+    }
+
     for (int i = 0 ; i < ARRAY_SIZE(default_configs); i++) {
         if (strcmp(default_configs[i].board_version, board_version) == 0) {
             GLOBAL_STATE->DEVICE_CONFIG = default_configs[i];
